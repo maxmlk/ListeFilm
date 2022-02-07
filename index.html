@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Demo DAWIN</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+</head>
+
+<body>
+    <div id="app">
+        <h1 v-if="display"> {{titre_page}} </h1>
+        <p>{{ message }}</p>
+
+        <ul>
+            <li v-for="(movie,i) in movies" v-bind:title="movie">{{ movie }}
+                <button v-on:click="select_movie(movie)">Modifier</button>
+                <button v-on:click="supp(i)">Supprimer</button>
+            </li>
+        </ul>
+        <input type="text" v-model="film"></input>
+        <button v-on:click="add">Nouveau film</button>
+        <p>{{ message_reversed }} </p>
+        <div v-show="display2">
+            <input type="text" v-model="film_modif"></input>
+            <button v-on:click="modif_movie()">modifier</button>
+        </div>
+    </div>
+
+
+
+
+    <script>
+        const vm = new Vue({
+            el: "#app",
+            data: {
+                titre_page: " Bonjour à toi jeune entrepreneur",
+                message: "titre des films à la une :",
+                movies: {
+                    titre:["Seigneur des anneaux", "Le Hobbit", "Star Wars"],
+                    année:["2001","2012","1999"],
+                    description:["Tolkien","Tolkien","Tolkien"],
+                    realisateur:["Tolkien","Tolkien","Tolkien"]
+                },
+
+                film: "",
+                film_modif: "",
+                display: true,
+                display2: false,
+                film_index: ""
+
+
+            },
+            methods: {
+                add() { this.movies.push(this.film) },
+                select_movie(movie) {
+                    this.film_modif = movie;
+                    this.film_index = this.movies.indexOf(movie);
+                    this.display2 = true;
+                },
+                modif_movie() {
+                  this.movies[this.film_index] = this.film_modif;
+                  this.film_modif = "";
+                  this.film_index = "";
+                  this.display2 = false;
+                },
+                supp(i) { this.movies.splice(i, 1) }
+            },
+            computed: {
+                message_reversed() {
+                    return this.film.replace(0).slice(0, 1).toUpperCase()
+                }
+            }
+
+        })
+    </script>
+</body>
+
+</html>
