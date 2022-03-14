@@ -12,67 +12,111 @@
 
 <body>
     <div id="app">
+        <input placeholder="Recherche" type="text" v-model="search">
         <h1 v-if="display"> {{titre_page}} </h1>
         <p>{{ message }}</p>
 
         <ul>
-            <li v-for="(movie,i) in movies" v-bind:title="movie">{{ movie }}
+            <li v-for="(movie,i) in filterMovies" v-bind:title="movie">{{ movie.titre }} <br>
+                {{ movie.annee }} <br>
+                {{ movie.description }}<br>
+                {{ movie.realisateur }}<br>
                 <button v-on:click="select_movie(movie)">Modifier</button>
                 <button v-on:click="supp(i)">Supprimer</button>
+                <br><br>
             </li>
         </ul>
-        <input type="text" v-model="film"></input>
-        <button v-on:click="add">Nouveau film</button>
-        <p>{{ message_reversed }} </p>
-        <div v-show="display2">
-            <input type="text" v-model="film_modif"></input>
+        <form>
+            <label>Titre</label><br><input type="text" value="Titre" v-model="titre" ></input><br>
+            <label>Année</label><br><input type="text" value="Annee" v-model="annee"></input><br>
+            <label>Description</label><br><input type="text" value="Description" v-model="description"></input><br>
+            <label>Réalisateur</label><br><input type="text" value="Réalisateur" v-model="realisateur"></input>
+        </form> <br>
+        <div>
+            <button v-on:click="add">Nouveau film</button>
+        </div>
+        <div>
             <button v-on:click="modif_movie()">modifier</button>
         </div>
+        <p>{{ message_reversed }} </p>
     </div>
-
-
 
 
     <script>
         const vm = new Vue({
             el: "#app",
             data: {
-                titre_page: " Bonjour à toi jeune entrepreneur",
+                titre_page: " Bienvenue chez LA PLACE DE LA FEMME C'EST LA CUISINE",
                 message: "titre des films à la une :",
-                movies: {
-                    titre:["Seigneur des anneaux", "Le Hobbit", "Star Wars"],
-                    année:["2001","2012","1999"],
-                    description:["Tolkien","Tolkien","Tolkien"],
-                    realisateur:["Tolkien","Tolkien","Tolkien"]
-                },
-
-                film: "",
-                film_modif: "",
+                movies: 
+                [
+                    {
+                        titre:"Seigneur des anneaux trilogie",
+                        annee:"2001 , 2002 , 2003",
+                        description:"Le Seigneur des anneaux (The Lord of the Rings) est un roman de J. R. R. Tolkien paru en trois volumes en 1954 et 1955. ",
+                        realisateur:"Tolkien"
+                    },
+                    {
+                        titre:"Le Hobbit trilogie",
+                        annee:"2012 , 2013 , 2014",
+                        description:"Bilbon Sacquet mène une existence paisible dans sa maison, jusqu'à ce que le magicien Gandalf vienne le chercher pour qu'il prenne part à une aventure avec un groupe de nains. Ces derniers veulent reconquérir leur royaume, détruit par le terrible dragon cracheur de feu Smaug, qui habite toujours les lieux, planqué sous des milliers de pièces d'or.",
+                        realisateur:"Tolkien"
+                    },
+                    {
+                        titre:"Star Wars hexalogie",
+                        annee:"1977 , 1980 , 1983 , 1999 , 2002, 2005",
+                        description:"Il y a bien longtemps, dans une galaxie très lointaine. La guerre civile fait rage entre l'Empire galactique et l'Alliance rebelle. Capturée par les troupes de choc de l'Empereur menées par le sombre et impitoyable Dark Vador, la princesse Leia Organa dissimule les plans de l'Etoile Noire, une station spatiale invulnérable, à son droïde R2-D2 avec pour mission de les remettre au Jedi Obi-Wan Kenobi.",
+                        realisateur:"G.Lucas"
+                    }
+                ],
+                
+                search: "",
+                titre: "",
+                annee: "",
+                description: "",
+                realisateur: "",
                 display: true,
                 display2: false,
-                film_index: ""
+                film_index: -1
 
 
             },
+
+            
             methods: {
-                add() { this.movies.push(this.film) },
+                add() { this.movies.push({titre:this.titre,annee:this.annee,description:this.description,realisateur:this.realisateur}) },
                 select_movie(movie) {
-                    this.film_modif = movie;
+                    this.titre = movie.titre;
+                    this.annee = movie.annee;
+                    this.description = movie.description;
+                    this.realisateur = movie.realisateur;
                     this.film_index = this.movies.indexOf(movie);
                     this.display2 = true;
                 },
                 modif_movie() {
-                  this.movies[this.film_index] = this.film_modif;
-                  this.film_modif = "";
-                  this.film_index = "";
-                  this.display2 = false;
-                },
+                    this.movies[this.film_index] = {titre:this.titre,annee:this.annee,description:this.description,realisateur:this.realisateur};
+                    this.supp(this.film_index)
+                    this.add()
+                    },
                 supp(i) { this.movies.splice(i, 1) }
             },
+
+
             computed: {
                 message_reversed() {
-                    return this.film.replace(0).slice(0, 1).toUpperCase()
+                    return this.titre.replace(0).slice(0, 1).toUpperCase()
+                },
+                firstLetter() {
+                    return this.form.movieTitle.charAt(0);
+                },
+                filterMovies() {
+                    console.log(this.search)
+                    if (this.search === "")
+                        return this.movies;
+                    else
+                        return this.movies.filter(e => e.titre.includes(this.search)| e.annee.includes(this.search)|e.realisateur.includes(this.search) );
                 }
+                
             }
 
         })
